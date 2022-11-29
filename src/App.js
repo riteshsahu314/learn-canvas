@@ -8,12 +8,15 @@ const defaultOptions = {
   height: 281,
 }
 
+const margin = 10
+
 function App() {
   // const canvasEl = useRef(null);
   useEffect(() => {
+    
     var canvas = new fabric.Canvas("canvas", {
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: getContainerSize().width,
+      height: getContainerSize().height,
       backgroundColor: "yellow",
       preserveObjectStacking: true,
       fireRightClick: true,
@@ -40,19 +43,22 @@ function App() {
       width: 500,
       height: 281,
       fill: "white",
-      absolutePositioned: true,
+      // absolutePositioned: true,
       evented: false,
       selectable: false,
       stroke: "blue",
       strokeWidth: 10,
-      originX: 'center',
-      originY: 'center'
+      strokeDashArray: [8,8],
+      // paintFirst: 'fill',
+      // strokeUniform: true
+      // originX: 'center',
+      // originY: 'center'
     });
 
     canvas.add(frame);
-    canvas.add(g1);
-    frame.center();
-    g1.center();
+    // canvas.add(g1);
+    // frame.center();
+    // g1.center();
 
     function onResize(e) {
     
@@ -67,19 +73,16 @@ function App() {
       // canvas.renderAll();
 
       const ratio = canvas.getHeight() / canvas.getWidth();
-      const containerWidth   = window.innerWidth;
-      const containerHeight  = window.innerHeight;
+      const containerWidth   = getContainerSize().width;
+      const containerHeight  = getContainerSize().height;
   
-      const scale = containerHeight / canvas.getHeight();
-      const zoom  = canvas.getZoom() * scale;
-      canvas.setDimensions({width: containerHeight / ratio, height: containerHeight});
-      canvas.setViewportTransform([zoom, 0, 0, zoom, -zoom, -zoom]);
+      const scale = canvas.getHeight() / (frame.height);
+      const zoom  = scale;
+      console.log(zoom, "zoom")
+      // const zoom  = canvas.getZoom() * scale;
+      canvas.setDimensions({width: containerWidth, height: containerHeight});
+      canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
       const frameScale = containerHeight / frame.height;
-      // frame.setOptions({
-      //   scaleX: frameScale,
-      //   scaleY: frameScale
-      // })
-      // frame.center();
       canvas.renderAll();
     }
 
@@ -98,7 +101,11 @@ function App() {
     };
   }, []);
 
-  
+  function getContainerSize() {
+    const root = document.getElementById('root')
+    return root.getBoundingClientRect()
+  }
+
 
   return <canvas width="300" height="300" id="canvas" />;
 }
