@@ -6,14 +6,13 @@ const defaultOptions = {
   fill: "white",
   width: 500,
   height: 281,
-}
+};
 
-const margin = 10
+const margin = 10;
 
 function App() {
   // const canvasEl = useRef(null);
   useEffect(() => {
-    
     var canvas = new fabric.Canvas("canvas", {
       width: getContainerSize().width,
       height: getContainerSize().height,
@@ -24,10 +23,10 @@ function App() {
     });
 
     var c1 = new fabric.Circle({
-      top: 100,
-      left: 100,
+      top: 0,
+      left: 0,
       fill: "green",
-      radius: 50,
+      radius: 30,
     });
 
     var c2 = new fabric.Circle({
@@ -43,49 +42,53 @@ function App() {
       width: 500,
       height: 281,
       fill: "white",
-      // absolutePositioned: true,
+      absolutePositioned: true,
       evented: false,
       selectable: false,
       stroke: "blue",
       strokeWidth: 5,
-      strokeDashArray: [8,8],
-      // paintFirst: 'fill',
-      // strokeUniform: true
-      // originX: 'center',
-      // originY: 'center'
+      strokeDashArray: [8, 8]
     });
 
     canvas.add(frame);
-    // canvas.add(g1);
+    canvas.add(g1);
     // frame.center();
     // g1.center();
 
+    canvas.clipPath = frame;
+
     function onResize(e) {
+      const containerWidth = getContainerSize().width;
+      const containerHeight = getContainerSize().height;
 
-      const containerWidth   = getContainerSize().width;
-      const containerHeight  = getContainerSize().height;
-
-      const frameWidth   = frame.getScaledWidth();
-      const frameHeight  = frame.getScaledHeight();
+      const frameWidth = frame.getScaledWidth();
+      const frameHeight = frame.getScaledHeight();
 
       let scaleX = containerWidth / frameWidth;
       let scaleY = containerHeight / frameHeight;
 
       if (frameHeight >= frameWidth) {
-        scaleX = scaleY
+        scaleX = scaleY;
         if (containerWidth < frameWidth * scaleX) {
-          scaleX = scaleX * (containerHeight / (frameWidth * scaleX))
+          scaleX = scaleX * (containerHeight / (frameWidth * scaleX));
         }
       } else {
         if (containerHeight < frameHeight * scaleX) {
-          scaleX = scaleX * (containerHeight / (frameHeight * scaleX))
+          scaleX = scaleX * (containerHeight / (frameHeight * scaleX));
         }
       }
 
       const zoom = scaleX;
 
-      canvas.setDimensions({width: containerWidth, height: containerHeight});
-      canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
+      canvas.setDimensions({ width: containerWidth, height: containerHeight });
+      canvas.setViewportTransform([
+        zoom,
+        0,
+        0,
+        zoom,
+        containerWidth / 2 - (frameWidth * zoom) / 2,
+        containerHeight / 2 - (frameHeight * zoom) / 2,
+      ]);
       canvas.renderAll();
     }
 
@@ -103,10 +106,9 @@ function App() {
   }, []);
 
   function getContainerSize() {
-    const root = document.getElementById('root')
-    return root.getBoundingClientRect()
+    const root = document.getElementById("root");
+    return root.getBoundingClientRect();
   }
-
 
   return <canvas width="300" height="300" id="canvas" />;
 }
