@@ -47,7 +47,7 @@ function App() {
       evented: false,
       selectable: false,
       stroke: "blue",
-      strokeWidth: 10,
+      strokeWidth: 5,
       strokeDashArray: [8,8],
       // paintFirst: 'fill',
       // strokeUniform: true
@@ -61,35 +61,36 @@ function App() {
     // g1.center();
 
     function onResize(e) {
-    
-      // const ratio = canvas.getWidth() / canvas.getHeight();
-      // const containerWidth   = window.innerWidth;
-      // const containerHeight  = window.innerHeight;
-  
-      // const scale = containerWidth / canvas.getWidth();
-      // const zoom  = canvas.getZoom() * scale;
-      // canvas.setDimensions({width: containerWidth, height: containerWidth / ratio});
-      // canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
-      // canvas.renderAll();
 
-      const ratio = canvas.getHeight() / canvas.getWidth();
       const containerWidth   = getContainerSize().width;
       const containerHeight  = getContainerSize().height;
-  
-      const scale = canvas.getHeight() / (frame.height);
-      const zoom  = scale;
-      console.log(zoom, "zoom")
-      // const zoom  = canvas.getZoom() * scale;
+
+      const frameWidth   = frame.getScaledWidth();
+      const frameHeight  = frame.getScaledHeight();
+
+      let scaleX = containerWidth / frameWidth;
+      let scaleY = containerHeight / frameHeight;
+
+      if (frameHeight >= frameWidth) {
+        scaleX = scaleY
+        if (containerWidth < frameWidth * scaleX) {
+          scaleX = scaleX * (containerHeight / (frameWidth * scaleX))
+        }
+      } else {
+        if (containerHeight < frameHeight * scaleX) {
+          scaleX = scaleX * (containerHeight / (frameHeight * scaleX))
+        }
+      }
+
+      const zoom = scaleX;
+
       canvas.setDimensions({width: containerWidth, height: containerHeight});
       canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
-      const frameScale = containerHeight / frame.height;
       canvas.renderAll();
     }
 
     window.addEventListener("resize", onResize);
-    // canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
 
-    // canvas.renderAll();
     onResize();
 
     // make the fabric.Canvas instance available to your app
